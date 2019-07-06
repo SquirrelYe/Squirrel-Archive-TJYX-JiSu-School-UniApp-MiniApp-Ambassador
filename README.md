@@ -1,7 +1,7 @@
-# TJYX_JiSu_School_Uniapp_XYDS
+# TJYX_JiSu_School_Uniapp_WeiXinApp
 
 #### 介绍
-极速校园，校园大使微信小程序部分，天津毅襄科技发展有限公司。
+极速校园，用户微信小程序部分，天津毅襄科技发展有限公司。
 
 #### 软件架构
 软件架构说明
