@@ -1,10 +1,13 @@
 import Request from './request'
+import conf from '../config'
+
 export const req = new Request();
 /* 设置全局配置 */
 req.setConfig((config) => {
-	config.baseUrl = 'http://127.0.0.1:11130';
-	// config.baseUrl = 'https://jisu.yexuan.site/api';
-	config.header = { a: 1 }
+	// config.baseUrl = 'http://127.0.0.1:11130';
+	// config.baseUrl = 'https://jisu.yexuan.site/api'; 
+	config.baseUrl = conf.host
+	config.header = { edition: conf.edition }	// 请求头添加 应用版本信息
 	return config
 })
 /* 请求之前拦截器 */

@@ -56,6 +56,7 @@
 </template>
 <script>
 import listCell from '@/components/mix-list-cell';
+import conf from '@/utils/config'
 import { mapState } from 'vuex';
 let startY = 0, moveY = 0, pageAtTop = true;
 export default {
@@ -81,9 +82,7 @@ export default {
 			const pages = getCurrentPages();
 			const page = pages[pages.length - 1];
 			const currentWebview = page.$getAppWebview();
-			currentWebview.hideTitleNViewButtonRedDot({
-				index
-			});
+			currentWebview.hideTitleNViewButtonRedDot({ index });
 			// #endif
 			uni.navigateTo({ url: '/pages/notice/notice' });
 		}
@@ -108,17 +107,9 @@ export default {
 		// 分享
 		share() {
 			console.log('share');
-			uni.showToast({
-				title: '分享',
-				duration: 2000
-			});
+			this.$api.msg('请点击右上角三个点点分享喔~')
 		},
-		call() {
-			uni.makePhoneCall({
-				phoneNumber: '13370386527' //仅为示例
-			});
-		},
-
+		call() { uni.makePhoneCall({ phoneNumber: conf.phone }); },
 		/**
 		 *  会员卡下拉和回弹
 		 *  1.关闭bounce避免ios端下拉冲突

@@ -5,6 +5,9 @@ import App from './App'
 import Json from './Json' //测试用数据
 import regex from './utils/regex/regex'
 import apis from './utils/apis'
+import wx_api from './utils/wx_api'
+import msg_api from './utils/msg_api'
+import conf from './utils/config.js' 
 /**
  *  因工具函数属于公司资产, 所以直接在Vue实例挂载几个常用的函数
  *  所有测试用数据均存放于根目录json.js
@@ -40,18 +43,22 @@ const prePage = ()=>{
 	return prePage.$vm;
 }
 
-
 Vue.config.productionTip = false
-Vue.prototype.$edition = '1.0.0';
+Vue.prototype.$edition = conf.edition;
 Vue.prototype.$fire = new Vue();
 Vue.prototype.$store = store;
 Vue.prototype.$api = {msg, json, prePage};
 Vue.prototype.$regex = regex;
 Vue.prototype.$apis = apis;
-Vue.prototype.$host = 'http://127.0.0.1:11130';   
+Vue.prototype.$wx_api = wx_api;
+Vue.prototype.$msg_api = msg_api;
+// Vue.prototype.$host = 'http://127.0.0.1:11130';   
 // Vue.prototype.$host = 'https://jisu.yexuan.site/api';
+Vue.prototype.$host = conf.host;
 
 App.mpType = 'app'
 
-const app = new Vue({ ...App })
+const app = new Vue({
+    ...App
+})
 app.$mount()

@@ -17,28 +17,7 @@
 		
 		<view class="list-cell log-out-btn">
 			<text class="cell-tit" @tap="showModal" data-target="ChooseModal">申请提现</text>
-		</view>
-		
-		<!-- 优惠券面板 -->
-		<!-- 优惠券页面，仿mt -->
-		<view class="coupon-item" v-for="(item,index) in ticketList" :key="index">
-			<view class="con">
-				<view class="left">
-					<text class="title">{{item.ticket.title}}</text>
-					<text class="time">有效期至{{item.end}}</text>
-				</view>
-				<view class="right">
-					<text class="price" style="color: #707070;" v-if="item.condition === -1 || item.isTimeOut">{{item.ticket.short}}</text>
-					<text class="price" v-else>{{item.ticket.short}}</text>
-					<text>满{{item.ticket.fill}}可用</text>
-				</view>
-				
-				<view class="circle l"></view>
-				<view class="circle r"></view>
-			</view>
-			<text class="tips">{{item.ticket.details}}</text>
-		</view>
-		
+		</view>	
 
 		<view class="cu-modal bottom-modal" :class="modalName=='ChooseModal'?'show':''" @tap="hideModal">
 			<view class="cu-dialog" @tap.stop="">
@@ -75,14 +54,12 @@
 					{ value: 3, price: '200', checked: false, hot: false, }, 
 					{ value: 4, price: '500', checked: false, hot: false, }, 
 					{ value: 5, price: '1000', checked: false, hot: false, }],
-				chooseMoney:[],
-				ticketCount:0,
-				ticketList:[]
+				chooseMoney:[]
 			};
 		},
 		computed: { ...mapState(['user']) },
 		onLoad() { console.log(this.user) },
-		onShow() { this.getStock(); this.getTicket(); },
+		onShow() { this.getStock(); }, // this.getTicket(); 
 		methods:{
 			// 获取资金信息	
 			getStock(){ this.$apis.stock.findByUserId(this.user.id).then(res=>{ console.log('账户资金信息',res.data); this.stock = res.data }) },
@@ -113,8 +90,17 @@
 				
 				if(tx && final){
 					this.getStock()
-					this.$api.msg('提现申请发送成功')
-					this.hideModal()
+					let that = this
+					uni.showModal({
+						title:'提现信息提交成功',
+						content:'管理员将会通过电话联系你，提现结果请等待短信通知~',
+						cancelText:'好嘞~',
+						confirmText:'我知道啦',
+						complete() {
+							that.$api.msg('提现信息提交成功~')
+							that.hideModal()
+						}
+					})
 				}
             },
 			ChooseMoney(item) {

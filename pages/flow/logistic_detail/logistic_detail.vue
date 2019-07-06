@@ -3,72 +3,90 @@
 		<view class="bg-white padding margin-top-xs">
 			<view class="cu-steps">
 				<view class="cu-item" :class="index > basics ? '' : 'text-orange'" v-for="(item, index) in basicsList" :key="index">
-					<text :class="index > basics ? 'cuIcon-title' : 'cuIcon-' + item.icon"></text>
+					<text class="cuIcon-title"></text>
 					{{ item.name }}
 				</view>
 			</view>
 		</view>
 		<view class="cu-form-group">
 			<view class="title">订单状态</view>
-			<view class="title">已完成</view>
+			<view class="title">{{data.tip}}</view>
 		</view>
 		<view class="cu-form-group">
-			<view class="title">驿站</view>
-			<view class="title">煦园驿站</view>
+			<view class="title">取件地址</view>
+			<view class="title">{{data.from}}</view>
 		</view>
 		<view class="cu-form-group">
 			<view class="title">收货人</view>
-			<view class="title">叶泫</view>
+			<view class="title">{{data.location.name}}</view>
 		</view>
 		<view class="cu-form-group">
 			<view class="title">收货地址</view>
-			<view class="title">启能斋 520宿舍</view>
+			<view class="title">{{data.location.dom}}</view>
 		</view>
 		<view class="cu-form-group">
 			<view class="title">电话</view>
-			<view class="title">176-9579-6264</view>
+			<view class="title">{{data.cus.phone}}</view>
 		</view>
 		<view class="cu-form-group">
-			<view class="title">数量</view>
-			<view class="title">2</view>
-		</view>
-		<view class="cu-form-group">
-			<view class="title">价格</view>
-			<view class="title">￥3</view>
+			<view class="title">佣金</view>
+			<view class="title">￥{{data.money}}</view>
 		</view>
 		<view class="cu-form-group align-start">
-			<textarea maxlength="-1" disabled placeholder="收货码：Q6，姓名：叶武，学号：1607070125"></textarea>
+			<textarea maxlength="-1" disabled :placeholder="data.key" />
 		</view>
 	</view>
 </template>
 
 <script>
+import { mapState } from 'vuex';
 export default {
 	data() {
 		return {
-			basics: 3,
+			id:null,
+			basics: null,
+			data:{},
 			basicsList: [
-				{
-					icon: 'usefullfill',
-					name: '未领单'
-				},
-				{
-					icon: 'radioboxfill',
-					name: '已领单'
-				},
-				{
-					icon: 'subscription',
-					name: '待送达'
-				},
-				{
-					icon: 'roundcheckfill',
-					name: '已完成'
-				}
+				{ icon: 'usefullfill', name: '未领单' },
+				{ icon: 'radioboxfill', name: '已领单' },
+				{ icon: 'subscription', name: '已取件' },
+				{ icon: 'subscription', name: '待送达' },
+				{ icon: 'roundcheckfill', name: '已完成' }
 			]
 		};
 	},
-	methods: {}
+	computed: { ...mapState(['user']) },
+	onLoad(option) {
+		console.log(option);
+		this.id = option.id;
+		this.getLogistic(this.id)
+	},
+	methods: {
+		async getLogistic(id){
+			let res = await this.$apis.logistic.findOneById(id);
+			const { condition } = res.data
+			this.basics = condition;
+			this.data = Object.assign(res.data, this.conditionExp(condition));
+			console.log('获取传递信息',res.data)
+		},
+		// 订单状态
+		conditionExp(condition){
+			let tip = ''
+			switch(+condition){
+				case 0: tip = '未接单'; break;
+				case 1: tip = '已接单'; break;
+				case 2: tip = '已取件'; break;
+				case 3: tip = '待送达'; break;
+				case 4: tip = '已完成'; break;
+				case -1: tip = '订单取消'; break;
+			}
+			return { tip };
+		},	
+		
+	},
 };
 </script>
 
-<style></style>
+<style>
+	
+</style>

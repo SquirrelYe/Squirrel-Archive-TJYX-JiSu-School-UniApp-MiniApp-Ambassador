@@ -4,6 +4,8 @@
             "path" : "pages/flow/flow",
             "style" : {
 				"navigationBarTitleText": "校园大使端",
+				"onReachBottomDistance":50,
+				"enablePullDownRefresh":true,
 				"app-plus": {
 					"bounce": "none"
 				}
@@ -209,6 +211,8 @@
         ,{
             "path" : "pages/category/category",
             "style" : {
+				"enablePullDownRefresh":true,
+				"onReachBottomDistance":50,
 				"navigationBarTitleText": "活动",
 				"app-plus": {
 					"bounce": "none"

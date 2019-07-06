@@ -60,31 +60,19 @@ export default {
 			navList: [
 				{
 					state: 0,
-					text: '全部',
+					text: '代取订单',
 					loadingType: 'more',
 					orderList: []
 				},
 				{
 					state: 1,
-					text: '待发货',
+					text: '代发订单',
 					loadingType: 'more',
 					orderList: []
 				},
 				{
 					state: 2,
-					text: '待收货',
-					loadingType: 'more',
-					orderList: []
-				},
-				{
-					state: 3,
-					text: '待评价',
-					loadingType: 'more',
-					orderList: []
-				},
-				{
-					state: 4,
-					text: '售后',
+					text: '开卡订单',
 					loadingType: 'more',
 					orderList: []
 				}
