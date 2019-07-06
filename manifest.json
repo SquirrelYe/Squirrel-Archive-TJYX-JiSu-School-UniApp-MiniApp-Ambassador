@@ -1,5 +1,5 @@
 {
-    "name" : "TJYX_JiSu_School_Uniapp_WeiXinApp",
+    "name" : "E校拼大使端",
     "appid" : "__UNI__BF83AAC",
     "description" : "",
     "versionName" : "1.0.0",
@@ -56,7 +56,7 @@
     "mp-weixin" : {
         /* 小程序特有相关 */
         "usingComponents" : true,
-        "appid" : "wx755d37a92190903e",
+        "appid" : "wx64e14da209435ccb",
         "setting" : {
             "urlCheck" : false
         },

@@ -150,7 +150,7 @@ export default {
 				duration: 300,
 				scrollTop: 0
 			});
-			this.off = 0; this.lim = 6;
+			this.off = 0; this.lim = 10;
 			uni.showLoading({ title: '正在加载' });
 			this.init(0);
 		},

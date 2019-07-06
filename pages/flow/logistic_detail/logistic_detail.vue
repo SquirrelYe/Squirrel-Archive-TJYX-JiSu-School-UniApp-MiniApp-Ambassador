@@ -26,15 +26,29 @@
 		</view>
 		<view class="cu-form-group">
 			<view class="title">电话</view>
-			<view class="title">{{data.cus.phone}}</view>
+			<view class="title" @click="call(data.cus.phone)">{{data.cus.phone}}</view>
 		</view>
 		<view class="cu-form-group">
 			<view class="title">佣金</view>
 			<view class="title">￥{{data.money}}</view>
 		</view>
-		<view class="cu-form-group align-start">
+		<!-- <view class="cu-form-group align-start">
 			<textarea maxlength="-1" disabled :placeholder="data.key" />
-		</view>
+		</view> -->		
+		<view class="cu-form-group"><view class="title">详细信息</view></view>
+		<view class="cu-form-group">
+			<view class="grid col-4 grid-square flex-sub">
+				<view
+					class="padding-xs bg-img"
+					:style="[{backgroundImage:'url(' + host+'/'+data.icon +')'}]" 
+					:key="index"
+					@tap="ViewImage"
+					:data-url="host+'/'+data.icon"
+				>
+				</view>
+				<text class="text-sm placeholder">{{data.key}}</text>
+			</view>
+		</view>		
 	</view>
 </template>
 
@@ -43,6 +57,7 @@ import { mapState } from 'vuex';
 export default {
 	data() {
 		return {
+			host:null,
 			id:null,
 			basics: null,
 			data:{},
@@ -57,6 +72,7 @@ export default {
 	},
 	computed: { ...mapState(['user']) },
 	onLoad(option) {
+		this.host = this.$host
 		console.log(option);
 		this.id = option.id;
 		this.getLogistic(this.id)
@@ -81,8 +97,18 @@ export default {
 				case -1: tip = '订单取消'; break;
 			}
 			return { tip };
-		},	
-		
+		},
+		// 显示认证信息
+		ViewImage(e) {
+			let arr = []
+			arr.push(`${this.host}/${this.data.icon}`)
+			uni.previewImage({
+				urls: arr,
+				current: e.currentTarget.dataset.url
+			});
+		},
+		// 联系发件人
+		call(phone){ uni.makePhoneCall({ phoneNumber:phone }) },
 	},
 };
 </script>
