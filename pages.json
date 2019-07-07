@@ -298,6 +298,18 @@
 				"navigationBarTitleText": "商品评价"
 			}
         }
+        ,{
+            "path" : "pages/flow/lsend_detail/lsend_detail",
+            "style" : {
+				"navigationBarTitleText":"代发订单"
+			}
+        }
+        ,{
+            "path" : "pages/flow/card_detail/card_detail",
+            "style" : {
+				"navigationBarTitleText":"开卡订单"
+			}
+        }
     ],
 	"globalStyle": {
 		"navigationBarTextStyle": "black",

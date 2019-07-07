@@ -4,7 +4,7 @@
 		<view v-if="!hasLogin" class="empty">
 			<!-- <image src="/static/emptyCart.jpg" mode="aspectFit"></image> -->
 			<view class="empty-tips">
-				空空如也
+				还木有登录喔……
 				<view class="navigator" @click="navToLogin">去登陆></view>
 			</view>
 		</view>

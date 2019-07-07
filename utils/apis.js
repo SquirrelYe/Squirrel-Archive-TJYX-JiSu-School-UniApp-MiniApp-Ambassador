@@ -102,6 +102,7 @@ export default  {
         update(id, c) { return req.post('/ent/lsend', { 'judge': 3, 'id': id, 'condition': c }) },
         updateTake(id,t) { return req.post('/ent/lsend', { 'judge': 3, 'id': id, 'take': t }) },
         updateCode(id,code,c) { return req.post('/ent/lsend', { 'judge': 3, 'id': id, 'code': code, 'condition': c }) },
+        addTake(id, t, c) { return req.post('/ent/lsend', { 'judge': 3, 'id': id, 'take':t, 'condition': c }) },
 
         findAndCountAll(o, l) { return req.post('/ass/lsend', { 'judge': 0, 'offset': o, 'limit': l }) },
         findOneById(id) { return req.post('/ass/lsend', { 'judge': 1, 'id': id }) },

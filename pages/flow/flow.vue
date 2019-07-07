@@ -1,51 +1,61 @@
 <template>
-	<view class="content">
-		<view class="navbar" :style="{ position: headerPosition, top: headerTop }">
-			<view class="nav-item" :class="{ current: filterIndex === -1 }" @click="tabClick(-1)">快递代取</view>
-			<view class="nav-item" :class="{ current: filterIndex === 0 }" @click="tabClick(0)">快递代发</view>
-			<view class="nav-item" :class="{ current: filterIndex === 1 }" @click="tabClick(1)">线上开卡</view>
-		</view>
-		<!-- 快递带取单元 -->
-		<view class="goods-list" v-if="filterIndex == -1">
-			<view v-for="(item, index) in logisticList" :key="index" class="goods-item" @click="confirm(-1,item.id)">
-				<view class="image-wrapper">
-					<image :src="item.cus.info.avatarUrl" lazy-load mode="scaleToFill"></image>
-					<view class="cover" v-if="item.condition != 0"> 已被接单 </view>
-				</view>
-				<text class="text-xs item-center">取件地址: {{item.from}}</text>
-				<text class="text-xs item-center">送货地址：{{item.location.dom}}</text>
-				<view class="price-box">
-					<text>{{item.cus.info.nickName}}</text>
-					<text>￥ {{item.money}}</text>
-				</view>
+	<view>
+		<!-- 空白页 -->
+		<view v-if="!hasLogin" class="empty">
+			<!-- <image src="/static/emptyCart.jpg" mode="aspectFit"></image> -->
+			<view class="empty-tips">
+				空空如也喔~
+				<view class="navigator" @click="navToLogin">去登陆></view>
 			</view>
 		</view>
-		<!-- 快递代发单元 -->		
-		<view class="goods-list" v-if="filterIndex == 0">
-			<view v-for="(item, index) in lsendList" :key="index" class="goods-item" @click="confirm(0,item.id)">
-				<view class="image-wrapper">
-					<image :src="item.cus.info.avatarUrl"  lazy-load mode="scaleToFill"></image>
-					<view class="cover" v-if="item.condition != 0"> 已被接单 </view>
-				</view>
-				<text class="text-xs item-center">取件地址：{{item.location.dom}}</text>
-				<view class="price-box">
-					<text>{{item.cus.info.nickName}}</text>
-					<text>上门取件</text>
+		<view class="content" v-if="hasLogin">
+			<view class="navbar" :style="{ position: headerPosition, top: headerTop }">
+				<view class="nav-item" :class="{ current: filterIndex === -1 }" @click="tabClick(-1)">快递代取</view>
+				<view class="nav-item" :class="{ current: filterIndex === 0 }" @click="tabClick(0)">快递代发</view>
+				<view class="nav-item" :class="{ current: filterIndex === 1 }" @click="tabClick(1)">线上开卡</view>
+			</view>
+			<!-- 快递带取单元 -->
+			<view class="goods-list" v-if="filterIndex == -1">
+				<view v-for="(item, index) in logisticList" :key="index" class="goods-item" @click="confirm(-1,item)">
+					<view class="image-wrapper">
+						<image :src="item.cus.info.avatarUrl" lazy-load mode="scaleToFill"></image>
+						<view class="cover" v-if="item.condition != 0"> 已被接单 </view>
+					</view>
+					<text class="text-xs item-center">取件地址: {{item.from}}</text>
+					<text class="text-xs item-center">送货地址：{{item.location.dom}}</text>
+					<view class="price-box">
+						<text>{{item.cus.info.nickName}}</text>
+						<text>￥ {{item.money}}</text>
+					</view>
 				</view>
 			</view>
-		</view>
-		<!-- 线上开卡单元 -->			
-		<view class="goods-list" v-if="filterIndex == 1">
-			<view v-for="(item, index) in cardList" :key="index" class="goods-item" @click="confirm(1,item.id)">
-				<view class="image-wrapper">
-					<image src="../../static/card.png" style="width: 33%;height: 120upx;margin-top: 65upx;margin-left: 33%;" lazy-load mode="scaleToFill"></image>
-					<view class="cover" v-if="item.condition != 0"> 已被接单 </view>
+			<!-- 快递代发单元 -->		
+			<view class="goods-list" v-if="filterIndex == 0">
+				<view v-for="(item, index) in lsendList" :key="index" class="goods-item" @click="confirm(0,item)">
+					<view class="image-wrapper">
+						<image :src="item.cus.info.avatarUrl"  lazy-load mode="scaleToFill"></image>
+						<view class="cover" v-if="item.condition != 0"> 已被接单 </view>
+					</view>
+					<text class="text-xs item-center">取件地址：{{item.location.dom}}</text>
+					<view class="price-box">
+						<text>{{item.cus.info.nickName}}</text>
+						<text>上门取件</text>
+					</view>
 				</view>
-				<text class="text-xs item-center">联系电话：{{item.phone}}</text>
-				<text class="text-xs item-center">宿舍地址：{{item.dom}}</text>
-				<view class="price-box">
-					<text>{{item.name}}</text>
-					<text>￥ {{item.price}}</text>
+			</view>
+			<!-- 线上开卡单元 -->			
+			<view class="goods-list" v-if="filterIndex == 1">
+				<view v-for="(item, index) in cardList" :key="index" class="goods-item" @click="confirm(1,item)">
+					<view class="image-wrapper">
+						<image src="../../static/card.png" style="width: 33%;height: 120upx;margin-top: 65upx;margin-left: 33%;" lazy-load mode="scaleToFill"></image>
+						<view class="cover" v-if="item.condition != 0"> 已被接单 </view>
+					</view>
+					<text class="text-xs item-center">联系电话：{{item.phone}}</text>
+					<text class="text-xs item-center">宿舍地址：{{item.dom}}</text>
+					<view class="price-box">
+						<text>{{item.name}}</text>
+						<text>￥ {{item.price}}</text>
+					</view>
 				</view>
 			</view>
 		</view>
@@ -71,8 +81,9 @@ export default {
 			lim:10
 		};
 	},
-	computed: { ...mapState(['user']) },
-	onLoad(options) { this.init(0); },
+	computed: { ...mapState(['hasLogin','user']) },
+	onLoad(options) { }, // this.init(0); 
+	onShow() { console.log('onshow-->'),this.init(0); },
 	onPageScroll(e) {
 		//兼容iOS端下拉时顶部漂移
 		if (e.scrollTop >= 0) this.headerPosition = 'fixed'; 
@@ -155,14 +166,67 @@ export default {
 			this.init(0);
 		},
 		//详情
-		confirm(judge,id) {
-			// 校园大使才能查看详细信息
-			console.log('judge -->',judge,'id--->',id)
+		async confirm(judge,item) {
+			// 状态*（0.未接单、1.已接单、2.已取件、3.待送达、4.已完成、-1.订单取消）
+			console.log('judge -->',judge,'item--->',item)
+			const { id,condition } = item;
+			if(condition !== 0){ this.$api.msg('订单已被别人领取喔~'); return; };
+			let res = await uni.showModal({
+				title:'你确定接单吗^_^',
+				content:'订单确认了就不能取消了哟~'
+			})
+			// 接单逻辑
+			if(res[1].confirm){
+				// 快递代取订单
+				if(judge === -1){
+					let log = await this.$apis.logistic.findOneById(id);
+					if(log.data.condition !== 0) { this.$api.msg('订单已被其他人接单啦~'); this.init(0); return; };
+					let up = await this.$apis.logistic.addTake(id,this.user.id,1);   // id,t,c
+					console.log('绑定校园大使',up)	
+					if(up.data[0] !== 1){ this.$api.msg('接单失败了~'); return; }
+					else{
+						this.$api.msg('接单成功喔^_^');
+						this.init(0);
+						// 重定向到订单页面
+						
+					}
+				}
+				// 快递代发
+				if(judge === 0){
+					let ls = await this.$apis.lsend.findOneById(id);
+					if(ls.data.condition !== 0) { this.$api.msg('订单已被其他人接单啦~'); this.init(0); return; };
+					let up = await this.$apis.lsend.addTake(id,this.user.id,1);   // id,t,c
+					console.log('绑定校园大使',up)	
+					if(up.data[0] !== 1){ this.$api.msg('接单失败了~'); return; }
+					else{
+						this.$api.msg('接单成功喔^_^');
+						this.init(0);
+						// 重定向到订单页面
+						
+					}
+				}
+				// 线上开卡
+				if(judge === 1){
+					let card = await this.$apis.card.findOneById(id);
+					if(card.data.condition !== 0) { this.$api.msg('订单已被其他人接单啦~'); this.init(0); return; };
+					let up = await this.$apis.card.setTaken(id,this.user.id,1);   // id,t,c
+					console.log('绑定校园大使',up)	
+					if(up.data[0] !== 1){ this.$api.msg('接单失败了~'); return; }
+					else{
+						this.$api.msg('接单成功喔^_^');
+						this.init(0);
+						// 重定向到订单页面
+						
+					}
+				}
+			}else return;
 			//  -1:快递代取, 0：快递代发, 1：线上开卡
-			if(judge == -1) uni.navigateTo({ url: `/pages/flow/logistic_detail/logistic_detail?id=${id}` });
-			if(judge == -0) uni.navigateTo({ url: `/pages/flow/lsend_detail/lsend_detail?id=${id}` });
-			if(judge == 1) uni.navigateTo({ url: `/pages/flow/card_detail/card_detail?id=${id}` });
-		},
+			// if(judge == -1) uni.navigateTo({ url: `/pages/flow/logistic_detail/logistic_detail?id=${id}` });
+			// if(judge == -0) uni.navigateTo({ url: `/pages/flow/lsend_detail/lsend_detail?id=${id}` });
+			// if(judge == 1) uni.navigateTo({ url: `/pages/flow/card_detail/card_detail?id=${id}` });
+		},		
+		// 登录
+		navToLogin() { uni.navigateTo({ url: '/pages/public/login' }); },
 	}
 };
 </script>
@@ -176,6 +240,34 @@ page,
 	padding-top: 96upx;
 }
 
+/* 空白页 */
+.empty {
+	position: fixed;
+	left: 0;
+	top: 0;
+	width: 100%;
+	height: 100vh;
+	padding-bottom: 100upx;
+	display: flex;
+	justify-content: center;
+	flex-direction: column;
+	align-items: center;
+	background: #fff;
+	image {
+		width: 240upx;
+		height: 160upx;
+		margin-bottom: 30upx;
+	}
+	.empty-tips {
+		display: flex;
+		font-size: $font-sm + 2upx;
+		color: $font-color-disabled;
+		.navigator {
+			color: $uni-color-primary;
+			margin-left: 16upx;
+		}
+	}
+}
 .navbar {
 	position: fixed;
 	left: 0;
