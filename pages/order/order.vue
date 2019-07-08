@@ -10,14 +10,14 @@
 					<!-- 空白页 -->
 					<empty v-if="tabItem.loaded === true"></empty>
 					<!-- 订单列表  @scrolltolower="loadData"-->
-					<view v-for="(item, index) in tabItem.orderList" :key="index" class="order-item" @click="enter(item)">
+					<view v-for="(item, index) in tabItem.orderList" :key="index" class="order-item">
 						<view class="i-top b-b">
 							<text class="time">{{ item.date }}</text>
 							<text class="state" :style="{ color: item.stateTipColor }">{{ item.stateTip }}</text>
 						</view>
 						<!-- 快递代取 -->
 						<block v-if="tabCurrentIndex == 0">
-							<view class="goods-box-single">
+							<view class="goods-box-single" @click="enter(item)">
 								<image class="goods-img" lazy-load :src="item.cus.info.avatarUrl" mode="aspectFill"></image>
 								<view class="right">
 									<text class="title clamp">快递代取</text>
@@ -29,13 +29,15 @@
 								共 <text class="num">1</text> 件商品 实付款 <text class="price">{{ item.money }}</text>
 							</view>
 							<view class="action-box b-t" >
-								<button class="action-btn" @click="cancelOrder(item)">取消订单</button>
-								<button class="action-btn recom">立即支付</button>
+								<button class="action-btn" @click="call(item.location.phone)">联系同学</button>
+								<button class="action-btn recom" v-if="item.condition == 1" @click="updateLog(item,2)">确认取件</button>
+								<button class="action-btn recom" v-if="item.condition == 2" @click="updateLog(item,3)">准备派送</button>
+								<button class="action-btn recom" v-if="item.condition == 3" @click="updateLog(item,4)">确认送达</button>
 							</view>
 						</block>
 						<!-- 快递代发 -->
 						<block v-if="tabCurrentIndex == 1">
-							<view class="goods-box-single">
+							<view class="goods-box-single" @click="enter(item)">
 								<image class="goods-img" lazy-load :src="item.cus.info.avatarUrl" mode="aspectFill"></image>
 								<view class="right">
 									<text class="title clamp">快递代发</text>
@@ -47,13 +49,15 @@
 								共 <text class="num">1</text> 件商品 实付款 <text class="price">{{ item.money }}</text>
 							</view>
 							<view class="action-box b-t" >
-								<button class="action-btn" @click="cancelOrder(item)">取消订单</button>
-								<button class="action-btn recom">立即支付</button>
+								<button class="action-btn" @click="call(item.location.phone)">联系同学</button>
+								<button class="action-btn recom" v-if="item.condition == 1" @click="updateLsend(item,2)">确认取件</button>
+								<button class="action-btn recom" v-if="item.condition == 1" @click="updateLsend(item,-1)">填写信息</button>
+								<button class="action-btn recom" v-if="item.condition == 2" @click="updateLsend(item,3)">确认送达</button>
 							</view>
 						</block>
 						<!-- 线上开卡 -->
 						<block v-if="tabCurrentIndex == 2">
-							<view class="goods-box-single">
+							<view class="goods-box-single" @click="enter(item)">
 								<image class="goods-img" lazy-load :src="card" mode="aspectFill"></image>
 								<view class="right">
 									<text class="title clamp">线上开卡</text>
@@ -65,8 +69,8 @@
 								共 <text class="num">1</text> 件商品 实付款 <text class="price">{{ item.price }}</text>
 							</view>
 							<view class="action-box b-t" >
-								<button class="action-btn" @click="cancelOrder(item)">取消订单</button>
-								<button class="action-btn recom">立即支付</button>
+								<button class="action-btn" @click="call(item.phone)">联系同学</button>
+								<button class="action-btn recom" v-if="item.condition == 1" @click="updateCard(item,2)">确认开卡</button>
 							</view>
 						</block>
 					</view>	
@@ -198,6 +202,22 @@ export default {
 		deleteOrder(index) { },
 		//取消订单
 		cancelOrder(item) { },
+		// 联系用户
+		call(phone){ uni.makePhoneCall({ phoneNumber:phone }); },
+		// 更新代取订单
+		updateLog(item,condition){
+			console.log('logistic--->',item,condition);
+		},
+		// 更新代取订单
+		updateLog(item,condition){
+			console.log('logistic--->',item,condition);
+		},
+		updateLsend(item,condition){
+			console.log('lsend--->',item,condition);
+		},
+		updateCard(item,condition){
+			console.log('card--->',item,condition);
+		},
 		//订单状态文字和颜色
 		// 0 logistic 状态*（0.未接单、1.已接单、2.已取件、3.待送达、4.已完成、-1.订单取消）
 		// 1 lsend 状态*（0.未接单、1.已接单、2.已取件、3.已送达、4.已发件、-1.订单取消）
