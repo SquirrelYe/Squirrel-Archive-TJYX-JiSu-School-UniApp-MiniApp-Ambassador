@@ -40,6 +40,7 @@
 			async toLogin(){
 				this.logining = true;
 				const {phone, password} = this;
+				if(!phone || !password){ this.$api.msg('不能输入为空喔~'); return; }
 				// 登录
 				let login = await this.$apis.user.cusLogin(phone,password).catch(err=>{ this.$api.msg('账号或密码错误'); this.logining = false; })
 				if(login.statusCode === 200){

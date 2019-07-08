@@ -78,7 +78,7 @@ export default  {
 
         findAndCountAllBySchool(s, o, l) { return req.post('/ass/card', { 'judge': 0, 'school_id': s, 'offset': o, 'limit': l }) },
         findOneById(id) { return req.post('/ass/card', { 'judge': 1, 'id': id }) },
-        findOneByUser(u) { return req.post('/ass/card', { 'judge': 2, 'user_id': u }) },
+        findAllByUser(u,o,l) { return req.post('/ass/card', { 'judge': 2, 'user_id': u, 'offset': o, 'limit': l  }) },
         findAndCountAllLikeByNameSchool(n, s) { return req.post('/ass/card', { 'judge': 3, 'name': n, 'school_id': s }) },
     },
     // 快递代取
@@ -90,7 +90,8 @@ export default  {
 
         findAndCountAll(o, l) { return req.post('/ass/logistic', { 'judge': 0, 'offset': o, 'limit': l }) },
         findOneById(id) { return req.post('/ass/logistic', { 'judge': 1, 'id': id }) },
-        findOneByUser(u, o, l) { return req.post('/ass/logistic', { 'judge': 2, 'user_id': u, 'offset': o, 'limit': l }) },
+        findAllByUser(u, o, l) { return req.post('/ass/logistic', { 'judge': 2, 'user_id': u, 'offset': o, 'limit': l }) },
+        findAllByTake(t, o, l) { return req.post('/ass/logistic', { 'judge': 6, 'take': t, 'offset': o, 'limit': l }) },
         findAndCountAllLikeByNameSchool(n, s) { return req.post('/ass/logistic', { 'judge': 3, 'school_id': s, 'name': n }) },
         findAllBySchool(s, o, l) { return req.post('/ass/logistic', { 'judge': 4, 'school_id': s, 'offset': o, 'limit': l }) },
         findAllBySchoolCondition(s, c, o, l) { return req.post('/ass/logistic', { 'judge': 5, 'school_id': s,'condition': c, 'offset': o, 'limit': l }) },
@@ -107,6 +108,7 @@ export default  {
         findAndCountAll(o, l) { return req.post('/ass/lsend', { 'judge': 0, 'offset': o, 'limit': l }) },
         findOneById(id) { return req.post('/ass/lsend', { 'judge': 1, 'id': id }) },
         findAllByUser(u, o, l) { return req.post('/ass/lsend', { 'judge': 2, 'user_id': u, 'offset': o, 'limit': l }) },
+        findAllByTake(t, o, l) { return req.post('/ass/lsend', { 'judge': 6, 'take': t, 'offset': o, 'limit': l }) },
         findAllBySchool(s, o, l) { return req.post('/ass/lsend', { 'judge': 3, 'school_id': s, 'offset': o, 'limit': l }) },
         findAndCountAllLikeByCusName(n,s,o,l) { return req.post('/ass/lsend', { 'judge': 4, 'name': n, 'school_id': s, 'offset': o, 'limit': l }) },
         findAndCountAllLikeByTakName(n,s,o,l) { return req.post('/ass/lsend', { 'judge': 5, 'name': n , 'school_id': s, 'offset': o, 'limit': l}) },

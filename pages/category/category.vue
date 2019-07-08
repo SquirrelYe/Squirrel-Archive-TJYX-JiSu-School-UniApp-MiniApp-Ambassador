@@ -56,8 +56,8 @@
 		methods: {
 			// 初始化页面  judge { 0.初始化、 1.下拉刷新、 2.上拉加载}
 			init(judge){ 
-				const {school_id, type} = this.user
-				this.$apis.activity.findAllBySchoolType(school_id,type,this.off,this.lim).then(res=>{ 
+				const {school_id} = this.user
+				this.$apis.activity.findAllBySchoolType(school_id,2,this.off,this.lim).then(res=>{ 
 					console.log(res.data); 
 					if(judge === 0){ this.category = res.data.rows; }
 					if(judge === 1){ this.$api.msg('刷新成功'); uni.stopPullDownRefresh(); this.category = res.data.rows; }
