@@ -220,10 +220,6 @@ export default {
 					}
 				}
 			}else return;
-			//  -1:快递代取, 0：快递代发, 1：线上开卡
-			// if(judge == -1) uni.navigateTo({ url: `/pages/flow/logistic_detail/logistic_detail?id=${id}` });
-			// if(judge == -0) uni.navigateTo({ url: `/pages/flow/lsend_detail/lsend_detail?id=${id}` });
-			// if(judge == 1) uni.navigateTo({ url: `/pages/flow/card_detail/card_detail?id=${id}` });
 		},		
 		// 登录
 		navToLogin() { uni.navigateTo({ url: '/pages/public/login' }); },

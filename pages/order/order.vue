@@ -17,7 +17,7 @@
 						</view>
 						<!-- 快递代取 -->
 						<block v-if="tabCurrentIndex == 0">
-							<view class="goods-box-single" @click="enter(item)">
+							<view class="goods-box-single" @click="enter(0,item)">
 								<image class="goods-img" lazy-load :src="item.cus.info.avatarUrl" mode="aspectFill"></image>
 								<view class="right">
 									<text class="title clamp">快递代取</text>
@@ -37,7 +37,7 @@
 						</block>
 						<!-- 快递代发 -->
 						<block v-if="tabCurrentIndex == 1">
-							<view class="goods-box-single" @click="enter(item)">
+							<view class="goods-box-single" @click="enter(1,item)">
 								<image class="goods-img" lazy-load :src="item.cus.info.avatarUrl" mode="aspectFill"></image>
 								<view class="right">
 									<text class="title clamp">快递代发</text>
@@ -57,7 +57,7 @@
 						</block>
 						<!-- 线上开卡 -->
 						<block v-if="tabCurrentIndex == 2">
-							<view class="goods-box-single" @click="enter(item)">
+							<view class="goods-box-single" @click="enter(2,item)">
 								<image class="goods-img" lazy-load :src="card" mode="aspectFill"></image>
 								<view class="right">
 									<text class="title clamp">线上开卡</text>
@@ -78,6 +78,26 @@
 				</scroll-view>
 			</swiper-item>
 		</swiper>
+		
+		<!-- 填写信息 -->
+		<view class="cu-modal bottom-modal" :class="modalName=='ChooseModal'?'show':''"  @tap="hideModal">
+			<view class="cu-dialog" @tap.stop="">
+				<view class="cu-bar bg-white">
+					<view class="action text-blue" @tap="hideModal">取消</view>
+					<view class="action text-green" @tap="choose">确定</view>
+				</view>
+				<view class="content">
+					<view class="row b-b">
+						<text class="tit">重量</text>
+						<input class="input" type="digit" v-model="weight" placeholder="请输入物品重量~" placeholder-class="placeholder text-sm" />
+					</view>
+					<view class="row b-b">
+						<text class="tit">价格</text>
+						<input class="input" type="digit" v-model="money" placeholder="请输入快递价格^_^" placeholder-class="placeholder text-sm" />
+					</view>
+				</view>
+			</view>
+		</view>
 	</view>
 </template>
 
@@ -99,7 +119,12 @@ export default {
 			card:'../../static/card.png',
 			// 分页数据
 			off:0,
-			lim:10
+			lim:10,			
+			
+			modalName: null,
+			clsend:{},
+			weight:null,
+			money:null
 		};
 	},
 	computed: { ...mapState(['user']) },
@@ -113,10 +138,13 @@ export default {
 		this.loadData(this.tabCurrentIndex,3)
 	},
 	onPullDownRefresh() {
-		this.off = 0; this.lim = 10;
-		this.loadData(this.tabCurrentIndex,1)
+		this.init();
 	},
 	methods: {
+		init(){
+			this.off = 0; this.lim = 10;
+			this.loadData(this.tabCurrentIndex,1)
+		},
 		//获取订单列表  订单状态*（0.未发货、1.已发货、2.已完成、3.已评价、-1.订单取消）
 		// index:滑动块索引0.1.2.3.-1 ， judge:状态控制 0.初始化，1.下拉加载，2.上拉刷新
 		async loadData(index,judge) {			
@@ -179,22 +207,13 @@ export default {
 			this.loadData(this.tabCurrentIndex,2)
 		},
 		// 查看详情
-		enter(item){
+		enter(judge,item){
 			console.log('查看详情',item)
-			let t = item.type
-			let loc = JSON.stringify(item.location)
-			if(t == -1){   // 代取快递
-				let log = JSON.stringify(item.logistic)
-				uni.navigateTo({ url: `/pages/flow/logistic_detail/logistic_detail?loc=${loc}&log=${log}` });	
-			}else if(t == -2){	// 代发快递
-				let lsend = JSON.stringify(item.lsend)
-				uni.navigateTo({ url: `/pages/flow/lsend_detail/lsend_detail?loc=${loc}&lsend=${lsend}` });	
-			}
-			else if(t == 0||t == 1||t == 2){	// 考试、旅游、水果
-				let citem = JSON.stringify(item)
-				uni.navigateTo({ url: `/pages/order/order_detail/order_detail?type=${t}&loc=${loc}&item=${citem}` });	
-			}
-			
+			const { id } = item;
+			//  0:快递代取, 1：快递代发, 2：线上开卡
+			if(judge == 0) uni.navigateTo({ url: `/pages/flow/logistic_detail/logistic_detail?id=${id}` });
+			if(judge == 1) uni.navigateTo({ url: `/pages/flow/lsend_detail/lsend_detail?id=${id}` });
+			if(judge == 2) uni.navigateTo({ url: `/pages/flow/card_detail/card_detail?id=${id}` });
 		},
 		//顶部tab点击
 		tabClick(index) { this.tabCurrentIndex = index; },
@@ -203,23 +222,49 @@ export default {
 		//取消订单
 		cancelOrder(item) { },
 		// 联系用户
-		call(phone){ uni.makePhoneCall({ phoneNumber:phone }); },
-		// 更新代取订单
-		updateLog(item,condition){
-			console.log('logistic--->',item,condition);
+		call(phone){
+			uni.showActionSheet({
+				itemList: [phone,'呼叫'],
+				success:function(res){
+				  if(res.tapIndex==1){ wx.makePhoneCall({ phoneNumber: phone }) }
+				}
+			})
 		},
 		// 更新代取订单
-		updateLog(item,condition){
+		async updateLog(item,condition){
 			console.log('logistic--->',item,condition);
+			const { id } = item;
+			// 询问
+			let res = await uni.showModal({
+				title:'你确认要点嘛~',
+				content:'此操作不能逆行喔'
+			})
+			if(!res[1].confirm){ return; }
+			let log = await this.$apis.logistic.update(id,condition);
+			console.log('更新代取订单',log)
+			if(!log || log.data[0] != 1){ this.$api.msg('执行操作失败喔~'); return; }
+			this.init();			
 		},
 		updateLsend(item,condition){
 			console.log('lsend--->',item,condition);
+			const { id } = item;
+			// condition -1:填写信息（重量、价格），2、确认取件，3、确认送达
+			if(condition === -1){ this.modalName = 'ChooseModal'; this.weight = null; this.money = null; this.clsend = item; }
+			
 		},
 		updateCard(item,condition){
 			console.log('card--->',item,condition);
 		},
+		hideModal(e) { this.modalName = null },
+		// 提交重量、价格信息
+		async choose(){
+			console.log('更新代发订单信息',this.clsend,this.weight,this.money);
+			const { id } = this.clsend;
+			let lsend = await this.$apis.lsend.updateWeightMoney(id,this.weight,this.money);
+			console.log(lsend)
+		},
 		//订单状态文字和颜色
-		// 0 logistic 状态*（0.未接单、1.已接单、2.已取件、3.待送达、4.已完成、-1.订单取消）
+		// 0 logistic 状态*（0.未接单、1.已接单、2.已取件、3.已送达、4.已完成、-1.订单取消）
 		// 1 lsend 状态*（0.未接单、1.已接单、2.已取件、3.已送达、4.已发件、-1.订单取消）
 		// 2 card 状态*（0.未处理、1.处理中、2.已完成、-1.撤销）
 		orderConditionExp(index,condition){
@@ -229,7 +274,7 @@ export default {
 					case 0: stateTip = '未接单'; break;
 					case 1: stateTip = '已接单'; break;
 					case 2: stateTip = '已取件'; break;
-					case 3: stateTip = '待送达'; break;
+					case 3: stateTip = '已送达'; break;
 					case 4: stateTip = '已完成'; break;
 					case -1:
 						stateTip = '订单已取消'; 
@@ -286,7 +331,30 @@ page,
 .list-scroll-content {
 	height: 100%;
 }
+.row {
+	display: flex;
+	align-items: center;
+	position: relative;
+	padding: 0 30upx;
+	height: 110upx;
+	background: #fff;
 
+	.tit {
+		flex-shrink: 0;
+		width: 120upx;
+		font-size: 30upx;
+		color: $font-color-dark;
+	}
+	.input {
+		flex: 1;
+		font-size: 30upx;
+		color: $font-color-dark;
+	}
+	.icon-shouhuodizhi {
+		font-size: 36upx;
+		color: $font-color-light;
+	}
+}
 .navbar {
 	display: flex;
 	height: 40px;
