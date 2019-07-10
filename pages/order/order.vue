@@ -42,16 +42,17 @@
 								<view class="right">
 									<text class="title clamp">快递代发</text>
 									<text class="attr-box">{{item.location.dom }} {{item.location.name }}</text>
-									<text class="price">{{ item.money }}</text>
+									<text class="price" v-if="item.money">{{ item.money }}</text>
 								</view>
 							</view>
-							<view class="price-box">
-								共 <text class="num">1</text> 件商品 实付款 <text class="price">{{ item.money }}</text>
+							<view class="price-box" v-if="item.money">
+								物品重量 <text class="weight">{{ item.weight }}kg</text>
+								订单价格 <text class="price">{{ item.money }}</text>
 							</view>
 							<view class="action-box b-t" >
 								<button class="action-btn" @click="call(item.location.phone)">联系同学</button>
 								<button class="action-btn recom" v-if="item.condition == 1" @click="updateLsend(item,2)">确认取件</button>
-								<button class="action-btn recom" v-if="item.condition == 1" @click="updateLsend(item,-1)">填写信息</button>
+								<button class="action-btn recom" v-if="item.condition == 1 && item.weight == null" @click="updateLsend(item,-1)">填写信息</button>
 								<button class="action-btn recom" v-if="item.condition == 2" @click="updateLsend(item,3)">确认送达</button>
 							</view>
 						</block>
@@ -65,9 +66,9 @@
 									<text class="attr-box">{{ item.phone }}</text>
 								</view>
 							</view>
-							<view class="price-box">
+							<!-- <view class="price-box">
 								共 <text class="num">1</text> 件商品 实付款 <text class="price">{{ item.price }}</text>
-							</view>
+							</view> -->
 							<view class="action-box b-t" >
 								<button class="action-btn" @click="call(item.phone)">联系同学</button>
 								<button class="action-btn recom" v-if="item.condition == 1" @click="updateCard(item,2)">确认开卡</button>
@@ -243,25 +244,51 @@ export default {
 			let log = await this.$apis.logistic.update(id,condition);
 			console.log('更新代取订单',log)
 			if(!log || log.data[0] != 1){ this.$api.msg('执行操作失败喔~'); return; }
+			else this.$api.msg('状态更新成功~')
 			this.init();			
 		},
-		updateLsend(item,condition){
+		async updateLsend(item,condition){
 			console.log('lsend--->',item,condition);
 			const { id } = item;
 			// condition -1:填写信息（重量、价格），2、确认取件，3、确认送达
-			if(condition === -1){ this.modalName = 'ChooseModal'; this.weight = null; this.money = null; this.clsend = item; }
-			
+			if(condition === -1){ this.modalName = 'ChooseModal'; this.weight = null; this.money = null; this.clsend = item; return; }
+			// 询问
+			if(!item.weight || !item.money){ this.$api.msg('请先填写重量价格信息~'); return; }
+			let res = await uni.showModal({
+				title:'你确认要点嘛~',
+				content:'此操作不能逆行喔'
+			})
+			if(!res[1].confirm){ return; }
+			let lsend = await this.$apis.lsend.update(id,condition)
+			if(!lsend || lsend.data[0] != 1){ this.$api.msg('执行操作失败喔~'); return; }
+			else this.$api.msg('状态更新成功~')
+			this.init()			
 		},
-		updateCard(item,condition){
+		async updateCard(item,condition){
 			console.log('card--->',item,condition);
+			const { id } = item;
+			let res = await uni.showModal({
+				title:'你确认要点嘛~',
+				content:'此操作不能逆行喔'
+			})
+			if(!res[1].confirm){ return; }
+			let card = await this.$apis.card.update(id,condition)
+			if(!card || card.data[0] != 1){ this.$api.msg('执行操作失败喔~'); return; }
+			else this.$api.msg('状态更新成功~')
+			this.init()
 		},
 		hideModal(e) { this.modalName = null },
 		// 提交重量、价格信息
 		async choose(){
+			if( !this.weight || !this.money ){ this.$api.msg('不能输入为空~'); return; }
 			console.log('更新代发订单信息',this.clsend,this.weight,this.money);
 			const { id } = this.clsend;
 			let lsend = await this.$apis.lsend.updateWeightMoney(id,this.weight,this.money);
 			console.log(lsend)
+			if(lsend.data[0] == 1){ this.$api.msg('更新成功~'); }
+			else this.$api.msg('信息更新失败~');
+			this.hideModal()
+			this.init();
 		},
 		//订单状态文字和颜色
 		// 0 logistic 状态*（0.未接单、1.已接单、2.已取件、3.已送达、4.已完成、-1.订单取消）
@@ -492,6 +519,15 @@ page,
 		.num {
 			margin: 0 8upx;
 			color: $font-color-dark;
+		}
+		.weight {
+			font-size: $font-base + 2upx;
+			color: $font-color-dark;
+			&:before {
+				content: '';
+				font-size: $font-sm;
+				margin: 0 2upx 0 8upx;
+			}
 		}
 		.price {
 			font-size: $font-lg;
