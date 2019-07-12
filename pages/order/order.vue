@@ -301,7 +301,7 @@ export default {
 					case 0: stateTip = '未接单'; break;
 					case 1: stateTip = '已接单'; break;
 					case 2: stateTip = '已取件'; break;
-					case 3: stateTip = '已送达'; break;
+					case 3: stateTip = '待送达'; break;
 					case 4: stateTip = '已完成'; break;
 					case -1:
 						stateTip = '订单已取消'; 
@@ -314,7 +314,7 @@ export default {
 					case 0: stateTip = '未接单'; break;
 					case 1: stateTip = '已接单'; break;
 					case 2: stateTip = '已取件'; break;
-					case 3: stateTip = '已送达'; break;
+					case 3: stateTip = '待送达'; break;
 					case 4: stateTip = '已发件'; break;
 					case -1:
 						stateTip = '订单已取消'; 
