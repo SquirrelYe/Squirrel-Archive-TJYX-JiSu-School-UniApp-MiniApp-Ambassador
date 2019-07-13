@@ -107,7 +107,7 @@ export default {
 		// 分享
 		share() {
 			console.log('share');
-			this.$api.msg('请点击右上角三个点点分享喔~')
+			this.$api.msg('可以点击右上角三个点点分享喔~')
 		},
 		call() { uni.makePhoneCall({ phoneNumber: conf.phone }); },
 		/**

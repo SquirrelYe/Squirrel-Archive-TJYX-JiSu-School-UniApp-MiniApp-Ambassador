@@ -104,6 +104,7 @@
 
 <script>
 import uniLoadMore from '@/components/uni-load-more/uni-load-more.vue';
+import conf from '@/utils/config'
 import empty from "@/components/empty";
 import { mapState } from 'vuex';
 export default {
@@ -135,16 +136,17 @@ export default {
 		this.loadData(this.tabCurrentIndex,0);
 	},
 	onShow() {
-		this.off = 0; this.lim = 10;
+		this.off = 0;
 		this.loadData(this.tabCurrentIndex,3)
 	},
 	onPullDownRefresh() {
-		this.init();
+		this.off = 0; this.lim = 10;
+		this.loadData(this.tabCurrentIndex,1)
 	},
 	methods: {
 		init(){
-			this.off = 0; this.lim = 10;
-			this.loadData(this.tabCurrentIndex,1)
+			this.off = 0;
+			this.loadData(this.tabCurrentIndex,3)
 		},
 		//获取订单列表  订单状态*（0.未发货、1.已发货、2.已完成、3.已评价、-1.订单取消）
 		// index:滑动块索引0.1.2.3.-1 ， judge:状态控制 0.初始化，1.下拉加载，2.上拉刷新
@@ -232,24 +234,32 @@ export default {
 			})
 		},
 		// 更新代取订单
+		// condition（0.未接单、1.已接单、2.已取件、3.待送达、4.已完成、-1.订单取消）
 		async updateLog(item,condition){
 			console.log('logistic--->',item,condition);
-			const { id } = item;
+			const { id,money } = item;
 			// 询问
 			let res = await uni.showModal({
 				title:'你确认要点嘛~',
 				content:'此操作不能逆行喔'
 			})
 			if(!res[1].confirm){ return; }
+			// 确认送达更新资金信息
+			let stk;
+			if(condition === 4) stk = await this.upStock(0,money);
+			console.log(stk)
+			if(stk.code !== 1){ this.$api.msg('更新订单异常'); return; }
+			// 更新代取订单状态
 			let log = await this.$apis.logistic.update(id,condition);
 			console.log('更新代取订单',log)
+			
 			if(!log || log.data[0] != 1){ this.$api.msg('执行操作失败喔~'); return; }
 			else this.$api.msg('状态更新成功~')
 			this.init();			
 		},
 		async updateLsend(item,condition){
 			console.log('lsend--->',item,condition);
-			const { id } = item;
+			const { id,money } = item;
 			// condition -1:填写信息（重量、价格），2、确认取件，3、确认送达
 			if(condition === -1){ this.modalName = 'ChooseModal'; this.weight = null; this.money = null; this.clsend = item; return; }
 			// 询问
@@ -259,19 +269,32 @@ export default {
 				content:'此操作不能逆行喔'
 			})
 			if(!res[1].confirm){ return; }
+			// 确认送达更新资金信息
+			let stk;
+			if(condition === 3) stk = await this.upStock(1,money);
+			console.log(stk)
+			if(stk.code !== 1){ this.$api.msg('更新订单异常'); return; }
+			// 更新订单状态
 			let lsend = await this.$apis.lsend.update(id,condition)
 			if(!lsend || lsend.data[0] != 1){ this.$api.msg('执行操作失败喔~'); return; }
 			else this.$api.msg('状态更新成功~')
 			this.init()			
 		},
 		async updateCard(item,condition){
+			// condition（0.未处理、1.处理中、2.已完成、-1.撤销）
 			console.log('card--->',item,condition);
-			const { id } = item;
+			const { id,price } = item;
 			let res = await uni.showModal({
 				title:'你确认要点嘛~',
 				content:'此操作不能逆行喔'
 			})
 			if(!res[1].confirm){ return; }
+			// 确认送达更新资金信息
+			let stk;
+			if(condition === 2) stk = await this.upStock(2,price);
+			console.log(stk)
+			if(stk.code !== 1){ this.$api.msg('更新订单异常'); return; }
+			// 更新订单状态
 			let card = await this.$apis.card.update(id,condition)
 			if(!card || card.data[0] != 1){ this.$api.msg('执行操作失败喔~'); return; }
 			else this.$api.msg('状态更新成功~')
@@ -340,6 +363,27 @@ export default {
 			let tmp = time.split('T')
 			let date = tmp[0] + '  '+ tmp[1].split(':')[0]+ ':' + tmp[1].split(':')[1]
 			return {date};
+		},
+		// 更新资金信息
+		// judge 0.快递待取，1.快递代发，2.线上开卡
+		upStock(judge,add){			
+			return new Promise(async (resolve,reject)=>{
+				// 结果返回值 -1 出现错误，1 处理正常
+				const { data } = await this.$apis.stock.findByUserId(this.user.id).catch(err=>{ reject({ code:-1 }) });
+				const { id,money,score } = data;
+				let m;
+				// 依据全局config计算应该累加的金额
+				(judge === 0)&&(m = Number(money)+Number(add)*conf.log)||(judge === 1)&&(m = Number(money)+Number(add)*conf.lsend)||(judge === 2)&&(m = Number(money)+Number(add)*conf.card)
+				// let m = Number(money) + Number(add)
+				let final = await this.$apis.stock.updateMoneyScore(id,m,score).catch(err=>{ reject({ code:-1 }) });
+				console.log(data,final)
+				if(data &&　final.data[0] ===1){ resolve({ code:1 }) };
+				// 写入交易清单
+				if(judge === 0) ;
+				if(judge === 1) ;
+				if(judge === 2) ;
+			})
+			
 		}
 	}
 };

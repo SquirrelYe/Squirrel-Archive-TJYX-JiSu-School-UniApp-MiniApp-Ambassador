@@ -33,7 +33,7 @@
 			<view class="title">{{data.arrive}}</view>
 		</view>
 		<!-- 已接单显示 -->
-		<block v-if="data.condition == 2">
+		<block v-if="data.condition >= 2">
 			<view class="cu-form-group">
 				<view class="title">物品重量</view>
 				<view class="title">{{data.weight}}</view>
