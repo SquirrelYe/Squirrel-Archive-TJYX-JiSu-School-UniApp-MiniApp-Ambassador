@@ -21,7 +21,7 @@ req.interceptor.request((config) => {
 	config.header = { 
 		...config.header,	
 		user_id,				// 请求头添加 user_id
-		token				// 请求头添加 token
+		token					// 请求头添加 token
 	}
 	return config;
 })

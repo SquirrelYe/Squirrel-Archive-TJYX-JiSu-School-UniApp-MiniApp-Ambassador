@@ -26,7 +26,7 @@
 		</view>
 		<view class="cu-form-group">
 			<view class="title">电话</view>
-			<view class="title" @click="call(data.cus.phone)">{{data.cus.phone}}</view>
+			<view class="title">{{data.cus.phone}}</view>
 		</view>
 		<view class="cu-form-group">
 			<view class="title">佣金</view>
@@ -106,9 +106,7 @@ export default {
 				urls: arr,
 				current: e.currentTarget.dataset.url
 			});
-		},
-		// 联系发件人
-		call(phone){ uni.makePhoneCall({ phoneNumber:phone }) },
+		}
 	},
 };
 </script>

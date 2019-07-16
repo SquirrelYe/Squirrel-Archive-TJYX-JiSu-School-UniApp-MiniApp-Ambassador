@@ -18,7 +18,7 @@
 		</view>
 		<view class="cu-form-group">
 			<view class="title">开卡人电话</view>
-			<view class="title" @click="call(data.phone)">{{data.phone}}</view>
+			<view class="title">{{data.phone}}</view>
 		</view>
 		<view class="cu-form-group">
 			<view class="title">上门地址</view>
@@ -76,9 +76,7 @@ export default {
 				case -1: tip = '订单取消'; break;
 			}
 			return { tip };
-		},
-		// 联系发件人
-		call(phone){ uni.makePhoneCall({ phoneNumber:phone }) },
+		}
 	},
 };
 </script>
