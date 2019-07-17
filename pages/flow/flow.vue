@@ -31,7 +31,7 @@
 			</view>
 			<!-- 快递代发单元 -->		
 			<view class="goods-list" v-if="filterIndex == 0">
-				<view v-for="(item, index) in lsendList" :key="index" class="goods-item" @click="confirm(0,item)">
+				<!-- <view v-for="(item, index) in lsendList" :key="index" class="goods-item" @click="confirm(0,item)">
 					<view class="image-wrapper">
 						<image :src="item.cus.info.avatarUrl"  lazy-load mode="scaleToFill"></image>
 						<view class="cover" v-if="item.condition != 0"> 已被接单 </view>
@@ -40,6 +40,12 @@
 					<view class="price-box">
 						<text>{{item.cus.info.nickName}}</text>
 						<text>上门取件</text>
+					</view>
+				</view> -->
+				<view class="empty">
+					<view class="empty-tips">
+						你没有权限喔~
+						<!-- <view class="navigator">去登陆></view> -->
 					</view>
 				</view>
 			</view>

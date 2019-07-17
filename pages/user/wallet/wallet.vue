@@ -54,21 +54,26 @@
 					{ value: 3, price: '200', checked: false, hot: false, }, 
 					{ value: 4, price: '500', checked: false, hot: false, }, 
 					{ value: 5, price: '1000', checked: false, hot: false, }],
-				chooseMoney:[]
+				chooseMoney:[],
+				ticketCount:0
 			};
 		},
 		computed: { ...mapState(['user']) },
 		onLoad() { console.log(this.user) },
-		onShow() { this.getStock(); }, // this.getTicket(); 
+		onShow() { this.getStock(); this.getTicket();  },
 		methods:{
 			// 获取资金信息	
 			getStock(){ this.$apis.stock.findByUserId(this.user.id).then(res=>{ console.log('账户资金信息',res.data); this.stock = res.data }) },
 			// 获取优惠券信息
+			// async getTicket(){
+			// 	let tic = await this.$apis.uticket.findAndCountAllByUser(this.user.id,0,100)
+			// 	this.ticketCount = tic.data.count
+			// 	this.ticketList = tic.data.rows.filter(item=>{ item = Object.assign(item, this.orderExp(item.ticket)); return item; });	
+			// 	console.log('获取优惠券信息',this.ticketList)
+			// },
 			async getTicket(){
 				let tic = await this.$apis.uticket.findAndCountAllByUser(this.user.id,0,100)
 				this.ticketCount = tic.data.count
-				this.ticketList = tic.data.rows.filter(item=>{ item = Object.assign(item, this.orderExp(item.ticket)); return item; });	
-				console.log('获取优惠券信息',this.ticketList)
 			},
             showModal(e) { this.modalName = e.currentTarget.dataset.target },
 			hideModal(e) { this.modalName = null },

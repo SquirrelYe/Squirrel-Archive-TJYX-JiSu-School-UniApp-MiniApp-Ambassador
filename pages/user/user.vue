@@ -29,7 +29,7 @@
 				}
 			]" @touchstart="coverTouchstart" @touchmove="coverTouchmove" @touchend="coverTouchend" >
 			<image class="arc" src="/static/arc.png"></image>
-			<view class="tj-sction">
+			<view class="tj-sction" @click="navTo('/pages/user/wallet/wallet')">
 				<view class="tj-item">
 					<text class="num">{{ stock.money || 0 }}</text>
 					<text>余额</text>
@@ -109,7 +109,14 @@ export default {
 			console.log('share');
 			this.$api.msg('可以点击右上角三个点点分享喔~')
 		},
-		call() { uni.makePhoneCall({ phoneNumber: conf.phone }); },
+		call() { 
+			uni.showActionSheet({
+				itemList: [conf.phone,'呼叫'],
+				success:(res)=>{
+				  if(res.tapIndex==1){ wx.makePhoneCall({ phoneNumber: conf.phone }) }
+				}
+			})
+		},
 		/**
 		 *  会员卡下拉和回弹
 		 *  1.关闭bounce避免ios端下拉冲突
