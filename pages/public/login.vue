@@ -40,7 +40,7 @@
 			async toLogin(){
 				this.logining = true;
 				const {phone, password} = this;
-				if(!phone || !password){ this.$api.msg('不能输入为空喔~'); return; }
+				if(!phone || !password){ this.$api.msg('不能输入为空喔~'); this.logining = false;return; }
 				// 登录
 				let login = await this.$apis.user.cusLogin(phone,password).catch(err=>{ this.$api.msg('账号或密码错误'); this.logining = false; })
 				if(login.statusCode === 200){
@@ -50,7 +50,10 @@
 						let obj = { 'userinfo':info, 'token':token, 'user':login.data}
 						this.login(obj);
 						this.logining = true;
-						uni.navigateBack(); 
+						// 跳转首页
+						uni.switchTab({
+							url: '/pages/user/user'
+						});
 					}else{ this.$api.msg('啊喔~你现在还不是校园大使~'); this.logining = false;}
 				}else{ this.logining = false; }
 			}
