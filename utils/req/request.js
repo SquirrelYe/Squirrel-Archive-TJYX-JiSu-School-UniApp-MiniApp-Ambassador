@@ -1,3 +1,4 @@
+import store from '../../store/index'
 export default class Request {
 	constructor(arg) { this.request(arg) }
 	config = {
@@ -72,7 +73,7 @@ export default class Request {
 			content:'用户在另一处登录',
 			complete() {
 				// 清除缓存
-				uni.clearStorage()
+				store.commit('logout')
 				// 重定向
 				uni.redirectTo({ url:"/pages/public/login" })
 			}
