@@ -7,5 +7,7 @@ module.exports={
 	// 校园大使分红比例
 	log:1,
 	lsend:0.3,
-	card:1
+	card:1,
+	
+	interface : 'interface--jsxy--yx',          // 接口 密钥
 }
