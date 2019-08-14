@@ -246,9 +246,13 @@ export default {
 			if(!res[1].confirm){ return; }
 			// 确认送达更新资金信息
 			let stk;
-			if(condition === 4) stk = await this.upStock(0,money);
-			console.log(stk)
-			if(stk.code !== 1){ this.$api.msg('更新订单异常'); return; }
+			if(condition === 4) {
+				stk = await this.upStock(0,money);
+				console.log(stk);				
+				// 写入交易
+				await this.$ctran(this.user.id,1,money,`【校园大使】快递待取->订单id:${id}->money:${money}`)
+				if(stk.code !== 1){ this.$api.msg('更新订单异常'); return; }
+			}
 			// 更新代取订单状态
 			let log = await this.$apis.logistic.update(id,condition);
 			console.log('更新代取订单',log)
@@ -257,10 +261,11 @@ export default {
 			else this.$api.msg('状态更新成功~')
 			this.init();			
 		},
+		// 更新代发订单
+		// condition -1:填写信息（重量、价格），2、确认取件，3、确认送达
 		async updateLsend(item,condition){
 			console.log('lsend--->',item,condition);
 			const { id,money } = item;
-			// condition -1:填写信息（重量、价格），2、确认取件，3、确认送达
 			if(condition === -1){ this.modalName = 'ChooseModal'; this.weight = null; this.money = null; this.clsend = item; return; }
 			// 询问
 			if(!item.weight || !item.money){ this.$api.msg('请先填写重量价格信息~'); return; }
@@ -271,9 +276,13 @@ export default {
 			if(!res[1].confirm){ return; }
 			// 确认送达更新资金信息
 			let stk;
-			if(condition === 3) stk = await this.upStock(1,money);
-			console.log(stk)
-			if(stk.code !== 1){ this.$api.msg('更新订单异常'); return; }
+			if(condition === 3) {
+				stk = await this.upStock(1,money);
+				console.log(stk);				
+				// 写入交易
+				// await this.$ctran(this.user.id,1,money,`【校园大使】快递待取->订单id:${id}->money:${money}`)
+				if(stk.code !== 1){ this.$api.msg('更新订单异常'); return; }
+			}
 			// 更新订单状态
 			let lsend = await this.$apis.lsend.update(id,condition)
 			if(!lsend || lsend.data[0] != 1){ this.$api.msg('执行操作失败喔~'); return; }
@@ -291,9 +300,13 @@ export default {
 			if(!res[1].confirm){ return; }
 			// 确认送达更新资金信息
 			let stk;
-			if(condition === 2) stk = await this.upStock(2,price);
-			console.log(stk)
-			if(stk.code !== 1){ this.$api.msg('更新订单异常'); return; }
+			if(condition === 2) {
+				stk = await this.upStock(2,price);
+				console.log(stk);				
+				// 写入交易
+				// await this.$ctran(this.user.id,1,money,`【校园大使】快递待取->订单id:${id}->money:${money}`)
+				if(stk.code !== 1){ this.$api.msg('更新订单异常'); return; }
+			}
 			// 更新订单状态
 			let card = await this.$apis.card.update(id,condition)
 			if(!card || card.data[0] != 1){ this.$api.msg('执行操作失败喔~'); return; }
