@@ -19,7 +19,7 @@
 			<view class="content">
 				<text class="title">{{item.title}}</text>
 				<view class="img-wrapper">
-					<image class="pic" :src="item.icon" lazy-load></image>
+					<image class="pic" :src="host + '/' +item.icon" lazy-load></image>
 					<view class="cover" v-if="item.condition === -1"> 活动结束 </view>
 				</view>
 				<text class="introduce">
@@ -35,6 +35,7 @@
 	export default {
 		data() {
 			return {
+				host: this.$host,
 				category:[],
 				off:0,
 				lim:4
