@@ -1,0 +1,19 @@
+{
+  "name": "TJYX_JiSu_School_Uniapp_XYDS",
+  "version": "1.0.0",
+  "description": "#### Description 极速校园，校园大使微信小程序部分，天津毅襄科技发展有限公司。",
+  "main": "main.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://gitee.com/git_x/TJYX_JiSu_School_Uniapp_XYDS.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "jsonwebtoken": "^8.5.1"
+  }
+}
