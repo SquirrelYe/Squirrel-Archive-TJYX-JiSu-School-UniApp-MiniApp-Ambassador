@@ -75,7 +75,17 @@
 				let tic = await this.$apis.uticket.findAndCountAllByUser(this.user.id,0,100)
 				this.ticketCount = tic.data.count
 			},
-            showModal(e) { this.modalName = e.currentTarget.dataset.target },
+            showModal(e) {
+				let date = new Date().getDate()
+				if(date !== 15 && date !== 30){
+					uni.showModal({
+						title:'提现失败喔',
+						content:'只能在每个月15和30提现哦~'
+					})
+					return;
+				}
+				this.modalName = e.currentTarget.dataset.target
+			},
 			hideModal(e) { this.modalName = null },
             async choose(){
 				if(this.chooseMoney.length == 0){ this.$api.msg('没有选择提现金额喔~'); return; }
