@@ -3,39 +3,42 @@
  * vuex管理登陆状态，具体可以参考官方登陆模板示例
  */
 import { mapMutations } from 'vuex';
-import conf from 'utils/config.js'
+import conf from 'utils/config.js';
 export default {
 	methods: { ...mapMutations(['login']) },
 	onLaunch: function() {
-		console.log('edition-->',conf.edition)
+		console.log('edition-->', conf.edition);
 		let hasLogin = uni.getStorageSync('hasLogin') || '';
 		let userInfo = uni.getStorageSync('userInfo') || '';
 		let user = uni.getStorageSync('user') || '';
-		if (hasLogin) { console.log('用户已登录-->',userInfo,user) }
-		
-		let _this = this
-		const updateManager = wx.getUpdateManager()
-		updateManager.onCheckForUpdate(function (res) {
-		  // 请求完新版本信息的回调
-		  if(res.hasUpdate) _this.$api.msg('有新版本发布')
-		  // else _this.$api.msg('暂无新版本')
-		})
-		updateManager.onUpdateReady(function () {
-		  wx.showModal({
-			title: '更新提示',
-			content: '新版本已经准备好，是否重启应用？',
-			success: function (res) {
-			  if (res.confirm) {
-				// 新的版本已经下载好，调用 applyUpdate 应用新版本并重启
-				updateManager.applyUpdate()
-			  }
-			}
-		  })
-		})
-		updateManager.onUpdateFailed(function () {
-		  // 新版本下载失败
-		  _this.$api.msg('应用新版本下载失败')
-		})
+		if (hasLogin) {
+			console.log('用户已登录-->', userInfo, user);
+		}
+
+		let _this = this;
+		const updateManager = uni.getUpdateManager();
+		updateManager.onCheckForUpdate(function(res) {
+			console.log('版本更新信息',res)
+			// 请求完新版本信息的回调
+			if (res.hasUpdate) _this.$api.msg('有新版本发布');
+			// else _this.$api.msg('暂无新版本')
+		});
+		updateManager.onUpdateReady(function() {
+			uni.showModal({
+				title: '更新提示',
+				content: '新版本已经准备好，是否重启应用？',
+				success: function(res) {
+					if (res.confirm) {
+						// 新的版本已经下载好，调用 applyUpdate 应用新版本并重启
+						updateManager.applyUpdate();
+					}
+				}
+			});
+		});
+		updateManager.onUpdateFailed(function() {
+			// 新版本下载失败
+			_this.$api.msg('应用新版本下载失败');
+		});
 	},
 	onShow: function() {
 		console.log('App Show');
